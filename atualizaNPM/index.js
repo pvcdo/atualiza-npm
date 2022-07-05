@@ -1,13 +1,19 @@
 import fs from 'fs'
-import updateNotifier from 'update-notifier';
 import path from "path"
 import walker from "walker"
+import { exec }from "child_process"
+import { promisify } from 'util'
 
 const initPath = 'D:/Paulo Victor/Estudos/Programação/estudos-nodejs'
 
-let passados = []
-  
-walker(initPath).on('dir', function(dir, stat) {
+async function andarilho(){
+  let pastas = []
+  await andar(pastas)
+  return pastas
+}
+
+async function andar(pastas){
+  walker(initPath).on('dir', function(dir, stat) {
     const arr_dir = dir.split('\\') 
     if(arr_dir.includes('node_modules')){
       
@@ -28,21 +34,38 @@ walker(initPath).on('dir', function(dir, stat) {
       })
 
       const pastaPath = path.join(...arr_dir_node)
-      if(!passados.includes(pastaPath)){
-        passados.push(pastaPath)
-        const packageJsonPath = `${pastaPath}\\package.json`
-        if(fs.existsSync(packageJsonPath)){
-          const packageJson = fs.readFileSync(packageJsonPath)
-          if(pasta === '/10_MVC/1-estrutura'){
-            console.log(`package.json da pasta ${pasta} --> ` + JSON.stringify(packageJson))
-          }
-        }else{
-          console.log(`Não existe package.json em ${pasta}`)
-        }
-        
-        //const notifier = updateNotifier()
+      if(!pastas.includes(pastaPath)){
+        pastas.push(pastaPath)
       }
     }
-})
+  })
+  
+}
+
+console.log(andarilho())
+
+    /* const packageJsonPath = `${pastaPath}\\package.json`
+        if(fs.existsSync(packageJsonPath)){
+          
+          
+          /*const packageJsonBuffer = fs.readFileSync(packageJsonPath)
+          const packageJson = JSON.parse(packageJsonBuffer)
+          
+          const shell1 = `cd ${pastaPath}`
+          const shell2 = 'npm-upgrade';
+
+          exec(`${shell1}\n${shell2}`,(error,stdout,stderr) => {
+            console.log(pasta)
+            if (error) {
+              console.log(`ERROOOOOOOOOO: ${error.message}`);
+              return;
+            }
+            if (stderr) {
+              console.log(`STDERRRRRRRR: ${stderr}`);
+              return;
+            }
+            console.log(`${stdout}`);
+          })
+        } */
 
 
